@@ -1,7 +1,7 @@
 import json
 import plotly
 import pandas as pd
-#import numpy as np
+import numpy as np
 
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
@@ -49,28 +49,66 @@ def index():
     """ """
 
     # extract data needed for visuals
-    # TODO: Below is an example - modify to extract data for your own visuals
+    # Barplot: types of genre of the messages
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
     
+    # Show distribution of different category
+    categories_names = list(df.columns[4:])
+    categories_counts = []
+    for column_name in categories_names:
+        categories_counts.append(np.sum(df[column_name]))
+
+    
     # create visuals
-    # TODO: Below is an example - modify to create your own visuals
+    # Three charts: Genres, distribution of messages by categories, histogram of messages
     graphs = [
+        {
+            "data": [
+            {
+            "type": "pie",
+            "domain": {
+            "x": [
+                0,
+                1
+                ],
+            "y": [
+                0,
+                1
+            ]
+            },
+            "marker": {
+                "colors": [
+                "#7fc97f",
+                "#beaed4",
+                "#fdc086"
+            ]
+            },
+            "textinfo": "label+value",
+            "labels": genre_names,
+            "values": genre_counts, 
+            "showlegend": False
+            }
+            ],
+            "layout": {
+                "title": "Messages by Genre"
+            }
+        },
         {
             'data': [
                 Bar(
-                    x=genre_names,
-                    y=genre_counts
+                    x=categories_names,
+                    y=categories_counts
                 )
             ],
 
             'layout': {
-                'title': 'Distribution of Message Genres',
+                'title': 'Distribution of Message Categories',
                 'yaxis': {
-                    'title': "Count"
+                    'title': "Number of messages"
                 },
                 'xaxis': {
-                    'title': "Genre"
+                    'title': "Category"
                 }
             }
         }
