@@ -3,7 +3,7 @@ import sys
 
 import pandas as pd
 import numpy as np
-import sqlite3
+#import sqlite3
 from sqlalchemy import create_engine
 
 #https://www.python.org/dev/peps/pep-0008/#:~:text=Imports%20are%20always%20put%20at,before%20module%20globals%20and%20constants.
@@ -42,28 +42,25 @@ def clean_data(df):
         categories[column] = categories[column].astype("int32")
     
     # drop the original categories column from `df`
-    df = df.drop(columns=["categories"], axis=1)
+    df = df.drop(columns=["categories"], axis=1, inplace=True)
     # concatenate the original dataframe with the new `categories` dataframe
     df = pd.concat([df,categories], axis=1)
     
     # DUPLICATES 
     # check number of duplicates
     unique_id, count = np.unique(df.id, return_counts=True)
+    # drop duplicates
     df_clean = df[ ~ df.duplicated(keep='first') ]
+
+    return df_clean
 
 
 def save_data(df, database_filename):
     """Save a data frame as a database using a given path"""
     
-    conn = sqlite3.connect(database_filename)
-    df.to_sql('df_clean', con = conn, if_exists='replace', index=False)
-    # commit any changes to the database and close the database
-    conn.commit()
-    conn.close()  
+    engine = create_engine('sqlite:///{}'.format(database_filename))
+    df.to_sql('df_clean', engine, index=False, if_exists='replace')
 
-    #from sqlalchemy import create_engine
-    #engine = create_engine('sqlite:///InsertDatabaseName.db')
-    #df.to_sql('InsertTableName', engine, index=False)
 
 
 def main():
