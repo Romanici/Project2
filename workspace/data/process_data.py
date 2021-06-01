@@ -56,6 +56,9 @@ def clean_data(df):
     unique_id, count = np.unique(df.id, return_counts=True)
     # drop duplicates
     df_clean = df[ ~ df.duplicated(keep='first') ]
+    
+    pd.set_option('mode.chained_assignment',None)
+    df_clean["related"] = df_clean["related"].replace(2,1)
 
     return df_clean
 
