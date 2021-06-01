@@ -5,6 +5,7 @@
 
 This project analyses messages posted publicly  on internet by users during catastrophies and tries to predict if the user really needs help or not. There are several categories to detail which kind of help is needed (water, food, etc.)
 
+---
 
 ### Description
 
