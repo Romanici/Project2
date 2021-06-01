@@ -9,7 +9,7 @@ from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 
-from sklearn.metrics import confusion_matrix, accuracy_score
+from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
@@ -69,6 +69,12 @@ def model_report(y_pred, y_test):
 
     print("Labels:", labels, "\n")
     print("Accuracy obtained for each Category:\n", accuracy, "\n")
+    print("------------------------------------------------------")
+
+    for i, col in enumerate(y_test):
+        print("Category: {}".format(col))
+        print("------------------------------------------------------")
+        print(classification_report(y_test[col], prediction[:, i]))
 
 
 
