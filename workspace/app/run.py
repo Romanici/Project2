@@ -14,12 +14,19 @@ from sqlalchemy import create_engine
 import joblib
 
 
+""" 
+The script has 4 functions. The main fn. requires 2 arguments from the command line, which are: 
+database_filepath: Path necessary to find the database to load. 
+model_filepath: Path in which to save the resulting model.
+
+Be careful with filepath of the DB, the model, and the host and ports of the web app. 
+"""
 
 
 app = Flask(__name__)
 
 def tokenize(text):
-    """ """
+    """For a chr array: Tokenize, lemmatize, put in lowercase and split into tokens"""
 
     tokens = word_tokenize(text)
     lemmatizer = WordNetLemmatizer()
@@ -46,7 +53,7 @@ model = joblib.load("model.pkl")
 @app.route('/')
 @app.route('/index')
 def index():
-    """ """
+    """Make two plots using data from the dataframe df"""
 
     # extract data needed for visuals
     # Barplot: types of genre of the messages
@@ -125,7 +132,7 @@ def index():
 # web page that handles user query and displays model results
 @app.route('/go')
 def go():
-    """ """
+    """Load the model and use it to predict the category of the input message"""
 
     # save user input in query
     query = request.args.get('query', '') 
@@ -143,7 +150,7 @@ def go():
 
 
 def main():
-    """ """
+    """Run the app. Select host and port."""
 
     app.run(host='0.0.0.0', port=3001, debug=True)
 

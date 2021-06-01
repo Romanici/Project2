@@ -2,12 +2,13 @@ import sys
 
 import numpy as np
 import pandas as pd
-import sklearn
+import re
 from sqlalchemy import create_engine, MetaData, Table
+
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
-import re
+
 from sklearn.metrics import confusion_matrix, accuracy_score
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
@@ -16,39 +17,98 @@ from sklearn.pipeline import Pipeline
 from sklearn.multioutput import MultiOutputClassifier
 from sklearn.model_selection import GridSearchCV
 
+import pickle
+
+""" 
+The script has 7 functions. The main fn. requires 2 arguments from the command line, which are: 
+database_filepath: Path necessary to find the database to load. 
+model_filepath: Path in which to save the resulting model.
+
+To run the script use this in the CLI:
+python3 train_classifier.py "../data/output_etl.db" "model.pkl"
+"""
+
 
 def load_data(database_filepath):
-    """ Merge two csv files by id and return a data frame """
+    """ Load the database, and spit the data into predictors and predicted variables """
 
-    pass
+    engine = create_engine('sqlite:///' + database_filepath)
+    df = pd.read_sql('df_clean', engine)
+
+    # Split the dataset (target and features)
+    X = df['message']  # predictors (message)
+    Y = df.iloc[:,range(4,40)]  # categories to predict
+
+    print("\n\nShape of X" , X.shape)
+    print("Shape of Y" , Y.shape)
+
+    return X, Y, Y.columns
+    # pass
 
 
 def tokenize(text):
-    """ Merge two csv files by id and return a data frame """
+    """ For a chr array: Tokenize, lemmatize, put in lowercase and split into tokens """
 
-    pass
+    # Normalization
+    text = re.sub(r"[^a-zA-Z0-9]", " ", text.lower())
+    # Tokenizing
+    tokens = word_tokenize(text)
+    
+    # Reduce words to their root form and remove stop words
+    stop_words = stopwords.words("english")
+    clean_text = [WordNetLemmatizer().lemmatize(word) for word in tokens if word not in stop_words]
+
+    return clean_text
+
+
+def model_report(y_pred, y_test):
+    ''' Show the accuracy of the model for each category '''
+
+    labels = np.unique(y_pred)
+    accuracy = (y_pred == y_test).mean()
+
+    print("Labels:", labels, "\n")
+    print("Accuracy obtained for each Category:\n", accuracy, "\n")
+
+
 
 
 def build_model():
-    """ Merge two csv files by id and return a data frame """
+    ''' Build pipeline model using different variations of tfidf and max_features of the RF '''
+    
+    # pipeline
+    pipeline = Pipeline([
+        ('vect', CountVectorizer(tokenizer=tokenize)),
+        ('tfidf', TfidfTransformer()),
+        ('clf', MultiOutputClassifier( RandomForestClassifier() ))
+    ])
 
-    pass
+    # pipeline parameters:
+    parameters = {  
+        'tfidf__use_idf': (True, False),
+        "clf__estimator__max_features": ["sqrt", "log2"]
+        }
+
+    cv = GridSearchCV(pipeline, param_grid=parameters)
+
+    return cv
 
 
-def evaluate_model(model, X_test, Y_test, category_names):
-    """ Merge two csv files by id and return a data frame """
+def evaluate_model(model, X_test, Y_test):
+    """ Use the model given to classify the test observations and show the results """
 
-    pass
+    model_ = model.predict(X_test)
+    model_report(model_, Y_test)
 
 
 def save_model(model, model_filepath):
-    """ Merge two csv files by id and return a data frame """
+    """ Save the model into a pickle file """
 
-    pass
+    pickle.dump(model, open(model_filepath, 'wb'))
 
 
 def main():
-    """ Merge two csv files by id and return a data frame """
+    """ Load data from DB, build a model and train it. Then evaluate it and save the model parameters in a pkl file. """
 
     if len(sys.argv) == 3:
         database_filepath, model_filepath = sys.argv[1:]

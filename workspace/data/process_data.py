@@ -7,6 +7,11 @@ import numpy as np
 from sqlalchemy import create_engine
 
 
+"""
+To run the script use:
+python3 process_data.py "disaster_messages.csv" "disaster_categories.csv" "output_etl.db" 
+"""
+
 def load_data(messages_filepath, categories_filepath):
     """ Merge two csv files by id and return a data frame """
 
