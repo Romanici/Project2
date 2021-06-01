@@ -14,6 +14,11 @@ The project is made up of three scripts:
 - **train_classifier.py** trains a random forest with multioutput (model.pkl).
 - **run.py** loads the Flask app and executes the ML trained model when needed. 
 
+To start up the web app successfully you need to:
+1. Run **process_data.py** using as arguments the filepaths of the messages and categories files. 
+2. Run **train_classifier.py.py** using as arguments the filepaths of the database you want to load and the ML model you want to save. 
+3. Execute **run.py** and go to http://localhost:3001/
+
 ### Dependencies
 
 - Python (3.8)
