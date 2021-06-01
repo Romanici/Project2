@@ -6,19 +6,17 @@ import numpy as np
 #import sqlite3
 from sqlalchemy import create_engine
 
-#https://www.python.org/dev/peps/pep-0008/#:~:text=Imports%20are%20always%20put%20at,before%20module%20globals%20and%20constants.
-
 
 def load_data(messages_filepath, categories_filepath):
     """ Merge two csv files by id and return a data frame """
 
     messages = pd.read_csv(messages_filepath)
     categories = pd.read_csv(categories_filepath)
-    print(messages.shape)
-    print(categories.shape)
+    print("\n\nShape of messages df" , messages.shape)
+    print("Shape of categories df" , categories.shape)
 
     df = messages.merge(categories, how="inner",on="id")
-    print(df.shape)
+    print("Inner join: \nShape of merged df" , df.shape, "\n\n")
 
     return df
 
@@ -42,9 +40,11 @@ def clean_data(df):
         categories[column] = categories[column].astype("int32")
     
     # drop the original categories column from `df`
-    df = df.drop(columns=["categories"], axis=1, inplace=True)
+    df = df.drop(columns=["categories"], axis=1)
     # concatenate the original dataframe with the new `categories` dataframe
     df = pd.concat([df,categories], axis=1)
+
+    #print( df.columns )
     
     # DUPLICATES 
     # check number of duplicates
