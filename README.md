@@ -23,25 +23,26 @@ To start up the web app successfully you need to:
 3. Execute **run.py** and go to http://localhost:3001/
 
 File structure:
-**workspace**
-|app
-|| - template
-|| |- master.html # main page of web app
-|| |- go.html     # classification result page of web app
-||- run.py        # Flask file that runs app
-|data
-||- disaster_categories.csv # data to process
-||- disaster_messages.csv   # data to process
-||- process_data.py
-||- output_etl.db.          # database to save clean data to
-|models
-||- train_classifier.py
-||- model.pkl             # saved model
+```
+WORKSPACE
+| app
+| | - template
+| | |- master.html # main page of web app
+| | |- go.html     # classification result page of web app
+| |- run.py        # Flask file that runs app
+| data
+| |- disaster_categories.csv # data to process
+| |- disaster_messages.csv   # data to process
+| |- process_data.py
+| |- output_etl.db.          # database to save clean data to
+| models
+| |- train_classifier.py
+| |- model.pkl             # saved model
 |
-|ETL Pipeline Preparation.ipynb
-|ML Pipeline Preparation.ipynb
-|README.md
-
+| ETL Pipeline Preparation.ipynb
+| ML Pipeline Preparation.ipynb
+| README.md
+```
 
 ### Dependencies
 
