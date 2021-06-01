@@ -74,7 +74,7 @@ def model_report(y_pred, y_test):
     for i, col in enumerate(y_test):
         print("Category: {}".format(col))
         print("------------------------------------------------------")
-        print(classification_report(y_test[col], prediction[:, i]))
+        print(classification_report(y_test[col], y_pred[:, i], zero_division=0) )
 
 
 
@@ -92,7 +92,7 @@ def build_model():
     # pipeline parameters:
     parameters = {  
         'tfidf__use_idf': (True, False),
-        "clf__estimator__max_features": ["log2", 0.01]
+        "clf__max_features": ["log2", 0.01]
         }
 
     cv = GridSearchCV(pipeline, param_grid=parameters, cv=3)
@@ -100,11 +100,11 @@ def build_model():
     return cv
 
 
-def evaluate_model(model, X_test, Y_test):
+def evaluate_model(model, X_test, Y_test, category_names):
     """ Use the model given to classify the test observations and show the results """
 
-    model_ = model.predict(X_test)
-    model_report(model_, Y_test)
+    y_pred = model.predict(X_test)
+    model_report(y_pred, Y_test)
 
 
 def save_model(model, model_filepath):
